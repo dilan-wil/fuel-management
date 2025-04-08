@@ -1,10 +1,16 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Car, AlertTriangle } from "lucide-react"
-import { useState } from "react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Car, AlertTriangle } from "lucide-react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +18,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 
 // Mock vehicle data
 const vehicleData = {
@@ -48,19 +54,25 @@ const vehicleData = {
       description: "Tire rotation recommended every 10,000 km",
     },
   ],
-}
+};
 
-export function VehicleInfo() {
-  const [showMaintenanceDialog, setShowMaintenanceDialog] = useState(false)
-  const [selectedAlert, setSelectedAlert] = useState<any>(null)
+export default function VehicleInfo() {
+  const [showMaintenanceDialog, setShowMaintenanceDialog] = useState(false);
+  const [selectedAlert, setSelectedAlert] = useState<any>(null);
 
-  const fuelPercentage = (vehicleData.currentFuelLevel / vehicleData.fuelCapacity) * 100
-  const fuelColor = fuelPercentage < 20 ? "bg-red-500" : fuelPercentage < 50 ? "bg-yellow-500" : "bg-green-500"
+  const fuelPercentage =
+    (vehicleData.currentFuelLevel / vehicleData.fuelCapacity) * 100;
+  const fuelColor =
+    fuelPercentage < 20
+      ? "bg-red-500"
+      : fuelPercentage < 50
+      ? "bg-yellow-500"
+      : "bg-green-500";
 
   const handleAlertClick = (alert: any) => {
-    setSelectedAlert(alert)
-    setShowMaintenanceDialog(true)
-  }
+    setSelectedAlert(alert);
+    setShowMaintenanceDialog(true);
+  };
 
   return (
     <>
@@ -72,16 +84,26 @@ export function VehicleInfo() {
                 <Car className="h-5 w-5" />
                 {vehicleData.make} {vehicleData.model} ({vehicleData.year})
               </CardTitle>
-              <CardDescription>License Plate: {vehicleData.licensePlate}</CardDescription>
+              <CardDescription>
+                License Plate: {vehicleData.licensePlate}
+              </CardDescription>
             </div>
-            <Badge variant={vehicleData.status === "Active" ? "success" : "destructive"}>{vehicleData.status}</Badge>
+            <Badge
+              variant={
+                vehicleData.status === "Active" ? "default" : "destructive"
+              }
+            >
+              {vehicleData.status}
+            </Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">Vehicle Details</h3>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                  Vehicle Details
+                </h3>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <p className="text-xs text-muted-foreground">Vehicle ID</p>
@@ -96,27 +118,42 @@ export function VehicleInfo() {
                     <p className="font-medium">{vehicleData.assignedTo}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Assigned Date</p>
-                    <p className="font-medium">{new Date(vehicleData.assignedDate).toLocaleDateString()}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Assigned Date
+                    </p>
+                    <p className="font-medium">
+                      {new Date(vehicleData.assignedDate).toLocaleDateString()}
+                    </p>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">Fuel Information</h3>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                  Fuel Information
+                </h3>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <p className="text-xs text-muted-foreground">Fuel Type</p>
                     <p className="font-medium">{vehicleData.fuelType}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Fuel Capacity</p>
-                    <p className="font-medium">{vehicleData.fuelCapacity} liters</p>
+                    <p className="text-xs text-muted-foreground">
+                      Fuel Capacity
+                    </p>
+                    <p className="font-medium">
+                      {vehicleData.fuelCapacity} liters
+                    </p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-xs text-muted-foreground mb-1">Current Fuel Level</p>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Current Fuel Level
+                    </p>
                     <div className="w-full bg-muted rounded-full h-2.5">
-                      <div className={`${fuelColor} h-2.5 rounded-full`} style={{ width: `${fuelPercentage}%` }}></div>
+                      <div
+                        className={`${fuelColor} h-2.5 rounded-full`}
+                        style={{ width: `${fuelPercentage}%` }}
+                      ></div>
                     </div>
                     <div className="flex justify-between text-xs mt-1">
                       <span>{vehicleData.currentFuelLevel} liters</span>
@@ -129,29 +166,51 @@ export function VehicleInfo() {
 
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">Maintenance Information</h3>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                  Maintenance Information
+                </h3>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <p className="text-xs text-muted-foreground">Current Mileage</p>
-                    <p className="font-medium">{vehicleData.mileage.toLocaleString()} km</p>
+                    <p className="text-xs text-muted-foreground">
+                      Current Mileage
+                    </p>
+                    <p className="font-medium">
+                      {vehicleData.mileage.toLocaleString()} km
+                    </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Last Maintenance</p>
-                    <p className="font-medium">{new Date(vehicleData.lastMaintenance).toLocaleDateString()}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Last Maintenance
+                    </p>
+                    <p className="font-medium">
+                      {new Date(
+                        vehicleData.lastMaintenance
+                      ).toLocaleDateString()}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Next Maintenance</p>
-                    <p className="font-medium">{new Date(vehicleData.nextMaintenance).toLocaleDateString()}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Next Maintenance
+                    </p>
+                    <p className="font-medium">
+                      {new Date(
+                        vehicleData.nextMaintenance
+                      ).toLocaleDateString()}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Current Location</p>
+                    <p className="text-xs text-muted-foreground">
+                      Current Location
+                    </p>
                     <p className="font-medium">{vehicleData.location}</p>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">Maintenance Alerts</h3>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                  Maintenance Alerts
+                </h3>
                 <div className="space-y-2">
                   {vehicleData.maintenanceAlerts.map((alert) => (
                     <div
@@ -183,11 +242,16 @@ export function VehicleInfo() {
         </CardContent>
       </Card>
 
-      <Dialog open={showMaintenanceDialog} onOpenChange={setShowMaintenanceDialog}>
+      <Dialog
+        open={showMaintenanceDialog}
+        onOpenChange={setShowMaintenanceDialog}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Maintenance Alert Details</DialogTitle>
-            <DialogDescription>Review the details of this maintenance alert</DialogDescription>
+            <DialogDescription>
+              Review the details of this maintenance alert
+            </DialogDescription>
           </DialogHeader>
 
           {selectedAlert && (
@@ -203,7 +267,9 @@ export function VehicleInfo() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Due Date</p>
-                  <p className="font-medium">{new Date(selectedAlert.dueDate).toLocaleDateString()}</p>
+                  <p className="font-medium">
+                    {new Date(selectedAlert.dueDate).toLocaleDateString()}
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Status</p>
@@ -219,7 +285,10 @@ export function VehicleInfo() {
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowMaintenanceDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowMaintenanceDialog(false)}
+            >
               Close
             </Button>
             <Button>Schedule Service</Button>
@@ -227,6 +296,5 @@ export function VehicleInfo() {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }
-

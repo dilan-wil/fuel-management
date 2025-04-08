@@ -7,7 +7,13 @@ import {
   signOut,
   User,
 } from "firebase/auth";
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 interface AuthContextType {
   user: User | null;
@@ -15,6 +21,7 @@ interface AuthContextType {
   employees: any;
   vehicles: any;
   cards: any;
+  transactions: any;
   login: (email: string, password: string) => Promise<string>; // now returns 6-digit code
   logout: () => Promise<void>;
   setupTotp: () => Promise<string>;
@@ -22,6 +29,7 @@ interface AuthContextType {
   setEmployees: React.Dispatch<React.SetStateAction<any>>;
   setVehicles: React.Dispatch<React.SetStateAction<any>>;
   setCards: React.Dispatch<React.SetStateAction<any>>;
+  setTransactions: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -32,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [employees, setEmployees] = useState<any>([]);
   const [vehicles, setVehicles] = useState<any>([]);
   const [cards, setCards] = useState<any>([]);
+  const [transactions, setTransactions] = useState<any>([]);
   const [admin, setAdmin] = useState<any>(null);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -48,7 +57,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Login function that sends a 6-digit code to user's email
   const login = async (email: string, password: string) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const userEmail = userCredential.user.email;
 
       if (!userEmail) throw new Error("User email not found");
@@ -88,7 +101,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, setupTotp, employee, setEmployee, employees, setEmployees, vehicles, setVehicles, cards, setCards }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        setupTotp,
+        employee,
+        setEmployee,
+        employees,
+        setEmployees,
+        vehicles,
+        setVehicles,
+        cards,
+        setCards,
+        transactions,
+        setTransactions,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

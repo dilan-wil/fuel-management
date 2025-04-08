@@ -1,9 +1,15 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   ArrowLeft,
   Search,
@@ -14,9 +20,9 @@ import {
   Eye,
   Calendar,
   AlertTriangle,
-} from "lucide-react"
-import AdminLayout from "@/components/admin-layout"
-import Link from "next/link"
+} from "lucide-react";
+import AdminLayout from "@/components/admin-layout";
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,163 +30,83 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { format } from "date-fns"
-import { Calendar as CalendarComponent } from "@/components/ui/calendar"
-import { cn } from "@/lib/utils"
-
-// Mock data for transactions
-const transactionsData = [
-  {
-    id: "TRX-001",
-    employee: "John Doe",
-    employeeId: "EMP001",
-    vehicle: "Toyota Camry",
-    vehiclePlate: "ABC-1234",
-    amount: 45.2,
-    cost: 101700,
-    date: "2025-03-24T10:23:00",
-    location: "Douala Station 1",
-    status: "completed",
-    fuelType: "petrol",
-  },
-  {
-    id: "TRX-002",
-    employee: "Jane Smith",
-    employeeId: "EMP002",
-    vehicle: "Honda Civic",
-    vehiclePlate: "DEF-5678",
-    amount: 38.5,
-    cost: 86625,
-    date: "2025-03-24T09:15:00",
-    location: "Douala Station 2",
-    status: "completed",
-    fuelType: "petrol",
-  },
-  {
-    id: "TRX-003",
-    employee: "Robert Johnson",
-    employeeId: "EMP003",
-    vehicle: "Nissan Altima",
-    vehiclePlate: "JKL-3456",
-    amount: 42.0,
-    cost: 94500,
-    date: "2025-03-23T16:42:00",
-    location: "Yaounde Station 1",
-    status: "completed",
-    fuelType: "petrol",
-  },
-  {
-    id: "TRX-004",
-    employee: "Emily Davis",
-    employeeId: "EMP004",
-    vehicle: "Ford Focus",
-    vehiclePlate: "GHI-9012",
-    amount: 35.8,
-    cost: 80550,
-    date: "2025-03-23T14:18:00",
-    location: "Douala Station 1",
-    status: "completed",
-    fuelType: "petrol",
-  },
-  {
-    id: "TRX-005",
-    employee: "Michael Wilson",
-    employeeId: "EMP005",
-    vehicle: "Toyota Hilux",
-    vehiclePlate: "MNO-7890",
-    amount: 65.5,
-    cost: 147375,
-    date: "2025-03-22T11:30:00",
-    location: "Douala Station 3",
-    status: "completed",
-    fuelType: "diesel",
-  },
-  {
-    id: "TRX-006",
-    employee: "Sarah Brown",
-    employeeId: "EMP006",
-    vehicle: "Nissan Patrol",
-    vehiclePlate: "PQR-1357",
-    amount: 78.2,
-    cost: 175950,
-    date: "2025-03-22T09:45:00",
-    location: "Yaounde Station 2",
-    status: "flagged",
-    fuelType: "diesel",
-  },
-  {
-    id: "TRX-007",
-    employee: "David Miller",
-    employeeId: "EMP007",
-    vehicle: "Toyota Corolla",
-    vehiclePlate: "STU-2468",
-    amount: 32.5,
-    cost: 73125,
-    date: "2025-03-21T15:20:00",
-    location: "Douala Station 2",
-    status: "completed",
-    fuelType: "petrol",
-  },
-  {
-    id: "TRX-008",
-    employee: "Jennifer Taylor",
-    employeeId: "EMP008",
-    vehicle: "Honda Accord",
-    vehiclePlate: "VWX-3690",
-    amount: 40.8,
-    cost: 91800,
-    date: "2025-03-21T13:10:00",
-    location: "Douala Station 1",
-    status: "pending",
-    fuelType: "petrol",
-  },
-]
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format } from "date-fns";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth-context";
 
 export default function TransactionsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedEmployee, setSelectedEmployee] = useState("all")
-  const [selectedVehicle, setSelectedVehicle] = useState("all")
-  const [selectedStatus, setSelectedStatus] = useState("all")
-  const [selectedFuelType, setSelectedFuelType] = useState("all")
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined)
-  const [dateTo, setDateTo] = useState<Date | undefined>(undefined)
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedEmployee, setSelectedEmployee] = useState("all");
+  const [selectedVehicle, setSelectedVehicle] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedFuelType, setSelectedFuelType] = useState("all");
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
+  const { transactions } = useAuth();
   // Get unique employees for filter
-  const uniqueEmployees = Array.from(new Set(transactionsData.map((tx) => tx.employeeId))).map((id) => {
-    const tx = transactionsData.find((t) => t.employeeId === id)
-    return { id, name: tx?.employee }
-  })
+  const uniqueEmployees = Array.from(
+    new Set(transactions.map((tx: any) => tx.employeeId))
+  ).map((id) => {
+    const tx = transactions.find((t: any) => t.employeeId === id);
+    return { id, name: tx?.employee };
+  });
 
   // Get unique vehicles for filter
-  const uniqueVehicles = Array.from(new Set(transactionsData.map((tx) => tx.vehiclePlate))).map((plate) => {
-    const tx = transactionsData.find((t) => t.vehiclePlate === plate)
-    return { plate, name: tx?.vehicle }
-  })
+  const uniqueVehicles = Array.from(
+    new Set(transactions.map((tx: any) => tx.vehiclePlate))
+  ).map((plate) => {
+    const tx = transactions.find((t: any) => t.vehiclePlate === plate);
+    return { plate, name: tx?.vehicle };
+  });
 
   // Filter transactions based on search query and filters
-  const filteredTransactions = transactionsData.filter((transaction) => {
+  const filteredTransactions = transactions.filter((transaction: any) => {
     const matchesSearch =
       transaction.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       transaction.employee.toLowerCase().includes(searchQuery.toLowerCase()) ||
       transaction.vehicle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      transaction.vehiclePlate.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      transaction.location.toLowerCase().includes(searchQuery.toLowerCase())
+      transaction.vehiclePlate
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      transaction.location.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesEmployee = selectedEmployee === "all" || transaction.employeeId === selectedEmployee
-    const matchesVehicle = selectedVehicle === "all" || transaction.vehiclePlate === selectedVehicle
-    const matchesStatus = selectedStatus === "all" || transaction.status === selectedStatus
-    const matchesFuelType = selectedFuelType === "all" || transaction.fuelType === selectedFuelType
+    const matchesEmployee =
+      selectedEmployee === "all" || transaction.employeeId === selectedEmployee;
+    const matchesVehicle =
+      selectedVehicle === "all" || transaction.vehiclePlate === selectedVehicle;
+    const matchesStatus =
+      selectedStatus === "all" || transaction.status === selectedStatus;
+    const matchesFuelType =
+      selectedFuelType === "all" || transaction.fuelType === selectedFuelType;
 
-    const txDate = new Date(transaction.date)
-    const matchesDateFrom = !dateFrom || txDate >= dateFrom
-    const matchesDateTo = !dateTo || txDate <= dateTo
+    const txDate = new Date(transaction.date);
+    const matchesDateFrom = !dateFrom || txDate >= dateFrom;
+    const matchesDateTo = !dateTo || txDate <= dateTo;
 
     return (
       matchesSearch &&
@@ -190,8 +116,8 @@ export default function TransactionsPage() {
       matchesFuelType &&
       matchesDateFrom &&
       matchesDateTo
-    )
-  })
+    );
+  });
 
   // Format currency
   const formatCurrency = (amount: number) => {
@@ -200,8 +126,8 @@ export default function TransactionsPage() {
       currency: "XAF",
       minimumFractionDigits: 0,
       currencyDisplay: "name",
-    }).format(amount)
-  }
+    }).format(amount);
+  };
 
   return (
     <AdminLayout>
@@ -209,7 +135,12 @@ export default function TransactionsPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">Transaction History</h1>
-            <Button variant="outline" size="sm" asChild className="flex items-center">
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="flex items-center"
+            >
               <Link href="/admin/dashboard">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Dashboard
@@ -230,7 +161,9 @@ export default function TransactionsPage() {
               <Filter className="h-5 w-5 text-nestle-red" />
               Filter Transactions
             </CardTitle>
-            <CardDescription>Find transactions by ID, employee, vehicle, or date range</CardDescription>
+            <CardDescription>
+              Find transactions by ID, employee, vehicle, or date range
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col md:flex-row gap-4 mb-4">
@@ -245,13 +178,16 @@ export default function TransactionsPage() {
               </div>
 
               <div className="flex-1 md:max-w-[200px]">
-                <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+                <Select
+                  value={selectedEmployee}
+                  onValueChange={setSelectedEmployee}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Employee" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Employees</SelectItem>
-                    {uniqueEmployees.map((emp) => (
+                    {uniqueEmployees.map((emp: any) => (
                       <SelectItem key={emp.id} value={emp.id}>
                         {emp.name}
                       </SelectItem>
@@ -261,13 +197,16 @@ export default function TransactionsPage() {
               </div>
 
               <div className="flex-1 md:max-w-[200px]">
-                <Select value={selectedVehicle} onValueChange={setSelectedVehicle}>
+                <Select
+                  value={selectedVehicle}
+                  onValueChange={setSelectedVehicle}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Vehicle" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Vehicles</SelectItem>
-                    {uniqueVehicles.map((veh) => (
+                    {uniqueVehicles.map((veh: any) => (
                       <SelectItem key={veh.plate} value={veh.plate}>
                         {veh.name} ({veh.plate})
                       </SelectItem>
@@ -279,7 +218,10 @@ export default function TransactionsPage() {
 
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 md:max-w-[200px]">
-                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                <Select
+                  value={selectedStatus}
+                  onValueChange={setSelectedStatus}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
@@ -293,7 +235,10 @@ export default function TransactionsPage() {
               </div>
 
               <div className="flex-1 md:max-w-[200px]">
-                <Select value={selectedFuelType} onValueChange={setSelectedFuelType}>
+                <Select
+                  value={selectedFuelType}
+                  onValueChange={setSelectedFuelType}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Fuel Type" />
                   </SelectTrigger>
@@ -310,14 +255,22 @@ export default function TransactionsPage() {
                   <PopoverTrigger asChild>
                     <Button
                       variant={"outline"}
-                      className={cn("w-full justify-start text-left font-normal", !dateFrom && "text-muted-foreground")}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !dateFrom && "text-muted-foreground"
+                      )}
                     >
                       <Calendar className="mr-2 h-4 w-4" />
                       {dateFrom ? format(dateFrom, "PPP") : "From date"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
-                    <CalendarComponent mode="single" selected={dateFrom} onSelect={setDateFrom} initialFocus />
+                    <CalendarComponent
+                      mode="single"
+                      selected={dateFrom}
+                      onSelect={setDateFrom}
+                      initialFocus
+                    />
                   </PopoverContent>
                 </Popover>
               </div>
@@ -327,14 +280,22 @@ export default function TransactionsPage() {
                   <PopoverTrigger asChild>
                     <Button
                       variant={"outline"}
-                      className={cn("w-full justify-start text-left font-normal", !dateTo && "text-muted-foreground")}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !dateTo && "text-muted-foreground"
+                      )}
                     >
                       <Calendar className="mr-2 h-4 w-4" />
                       {dateTo ? format(dateTo, "PPP") : "To date"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
-                    <CalendarComponent mode="single" selected={dateTo} onSelect={setDateTo} initialFocus />
+                    <CalendarComponent
+                      mode="single"
+                      selected={dateTo}
+                      onSelect={setDateTo}
+                      initialFocus
+                    />
                   </PopoverContent>
                 </Popover>
               </div>
@@ -346,7 +307,8 @@ export default function TransactionsPage() {
           <CardHeader>
             <CardTitle>Transaction List</CardTitle>
             <CardDescription>
-              Showing {filteredTransactions.length} of {transactionsData.length} transactions
+              Showing {filteredTransactions.length} of {transactions.length}{" "}
+              transactions
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -367,33 +329,44 @@ export default function TransactionsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTransactions.map((transaction) => (
+                {filteredTransactions.map((transaction: any) => (
                   <TableRow key={transaction.id}>
                     <TableCell>
                       <Checkbox id={`select-${transaction.id}`} />
                     </TableCell>
-                    <TableCell className="font-medium">{transaction.id}</TableCell>
+                    <TableCell className="font-medium">
+                      {transaction.id}
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={`/placeholder.svg?height=32&width=32`} alt={transaction.employee} />
+                          <AvatarImage
+                            src={`/placeholder.svg?height=32&width=32`}
+                            alt={transaction.employee}
+                          />
                           <AvatarFallback>
-                            {transaction.employee
+                            {transaction.employeeName
                               .split(" ")
-                              .map((n) => n[0])
+                              .map((n: any) => n[0])
                               .join("")}
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <div className="font-medium">{transaction.employee}</div>
-                          <div className="text-xs text-muted-foreground">{transaction.employeeId}</div>
+                          <div className="font-medium">
+                            {transaction.employeeName}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {transaction.employeeId}
+                          </div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div>
-                        <div>{transaction.vehicle}</div>
-                        <div className="text-xs text-muted-foreground">{transaction.vehiclePlate}</div>
+                        <div>{transaction.vehicleModel}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {transaction.vehiclePlate}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -406,15 +379,20 @@ export default function TransactionsPage() {
                               : "border-blue-200 text-blue-700"
                           }
                         >
-                          {transaction.fuelType.charAt(0).toUpperCase() + transaction.fuelType.slice(1)}
+                          {transaction.fuelType.charAt(0).toUpperCase() +
+                            transaction.fuelType.slice(1)}
                         </Badge>
                         <span>{transaction.amount} L</span>
                       </div>
                     </TableCell>
-                    <TableCell>{formatCurrency(transaction.cost)}</TableCell>
+                    <TableCell>
+                      {formatCurrency(transaction.totalCost)}
+                    </TableCell>
                     <TableCell>
                       <div>
-                        <div>{format(new Date(transaction.date), "MMM dd, yyyy")}</div>
+                        <div>
+                          {format(new Date(transaction.date), "MMM dd, yyyy")}
+                        </div>
                         <div className="text-xs text-muted-foreground">
                           {format(new Date(transaction.date), "HH:mm")}
                         </div>
@@ -422,11 +400,17 @@ export default function TransactionsPage() {
                     </TableCell>
                     <TableCell>
                       {transaction.status === "completed" ? (
-                        <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>
+                        <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                          Completed
+                        </Badge>
                       ) : transaction.status === "pending" ? (
-                        <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Pending</Badge>
+                        <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">
+                          Pending
+                        </Badge>
                       ) : (
-                        <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Flagged</Badge>
+                        <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
+                          Flagged
+                        </Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
@@ -440,13 +424,17 @@ export default function TransactionsPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuItem asChild>
-                            <Link href={`/admin/transactions/${transaction.id}`}>
+                            <Link
+                              href={`/admin/transactions/${transaction.id}`}
+                            >
                               <Eye className="mr-2 h-4 w-4" />
                               View Details
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
-                            <Link href={`/admin/transactions/receipt/${transaction.id}`}>
+                            <Link
+                              href={`/admin/transactions/receipt/${transaction.id}`}
+                            >
                               <FileText className="mr-2 h-4 w-4" />
                               View Receipt
                             </Link>
@@ -455,7 +443,9 @@ export default function TransactionsPage() {
                             <>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem asChild>
-                                <Link href={`/admin/alerts/investigate/${transaction.id}`}>
+                                <Link
+                                  href={`/admin/alerts/investigate/${transaction.id}`}
+                                >
                                   <AlertTriangle className="mr-2 h-4 w-4" />
                                   Investigate
                                 </Link>
@@ -473,6 +463,5 @@ export default function TransactionsPage() {
         </Card>
       </div>
     </AdminLayout>
-  )
+  );
 }
-

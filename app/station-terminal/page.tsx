@@ -88,6 +88,10 @@ export default function StationTerminalPage() {
     console.log(cards);
   }, [cards]);
 
+  useEffect(() => {
+    console.log(vehicles);
+  }, [vehicles]);
+
   // Handle card verification
   const verifyCard = () => {
     if (!cardNumber.trim()) {
@@ -203,6 +207,8 @@ export default function StationTerminalPage() {
         (vehicle: any) => vehicle.id === selectedCard?.vehicleId
       );
 
+      console.log(selectedVehicle);
+
       const transaction = {
         id: `TRX-${Math.floor(Math.random() * 10000)
           .toString()
@@ -212,7 +218,7 @@ export default function StationTerminalPage() {
         employeeId: selectedCard?.employeeId,
         employeeName: selectedCard?.employee.name,
         vehiclePlate: selectedCard?.vehicleId ?? "",
-        vehicleModel: selectedVehicle?.plate ?? "",
+        vehicleModel: selectedVehicle?.name ?? "",
         fuelType: fuelType?.name,
         amount: fuelAmount,
         pricePerLiter: fuelType?.price,
@@ -226,7 +232,7 @@ export default function StationTerminalPage() {
 
       setTransactionData(transaction);
       setTransactionComplete(true);
-      // await setDoc(doc(db, "transactions", transaction.id), transaction)
+      await setDoc(doc(db, "transactions", transaction.id), transaction);
       toast({
         title: "Transaction Successful",
         description: `Dispensed ${fuelAmount}L of ${

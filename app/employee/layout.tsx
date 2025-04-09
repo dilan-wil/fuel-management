@@ -14,25 +14,28 @@ export default function DashboardLayout({
   const { setEmployee, setEmployees, setVehicles, setCards, setTransactions } =
     useAuth();
 
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userDocRef = doc(db, "employees", user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-
-        if (userDocSnap.exists()) {
-          setEmployee(userDocSnap.data());
-          console.log("User data:", userDocSnap.data());
-        } else {
-          console.log("No user document found");
+    useEffect(() => {
+      const auth = getAuth();
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const userDocRef = doc(db, "employees", user.uid);
+          const userDocSnap = await getDoc(userDocRef);
+    
+          if (userDocSnap.exists()) {
+            setEmployee({
+              id: user.uid,
+              ...userDocSnap.data()
+            });
+            console.log("User data:", { id: user.uid, ...userDocSnap.data() });
+          } else {
+            console.log("No user document found");
+          }
         }
-      }
-    });
-
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, [setEmployee]);
+      });
+    
+      // Cleanup subscription on unmount
+      return () => unsubscribe();
+    }, [setEmployee]);
 
   useEffect(() => {
     const auth = getAuth();

@@ -110,9 +110,7 @@ export default function EmployeeDashboardPage() {
   const { employee, cards, transactions } = useAuth();
 
   useEffect(() => {
-    const hisCard = cards?.filter(
-      (card: any) => card.employeeId == employee.id
-    );
+    const hisCard = cards?.find((card: any) => card.employeeId == employee.id);
     setEmployeeCard(hisCard);
   }, [employee, cards]);
   // Function to handle refresh

@@ -11,7 +11,8 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { setEmployee } = useAuth();
+  const { setEmployee, setEmployees, setVehicles, setCards, setTransactions } =
+    useAuth();
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -28,8 +29,6 @@ export default function DashboardLayout({
         }
       }
     });
-
-    const { setEmployees, setVehicles, setCards, setTransactions } = useAuth();
 
     useEffect(() => {
       const auth = getAuth();

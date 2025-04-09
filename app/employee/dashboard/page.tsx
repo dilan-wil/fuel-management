@@ -107,10 +107,12 @@ export default function EmployeeDashboardPage() {
   const [timeRange, setTimeRange] = useState("year");
   const [lastUpdated, setLastUpdated] = useState("2 minutes ago");
   const [employeeCard, setEmployeeCard] = useState<any>({});
-  const { employee, cards } = useAuth();
+  const { employee, cards, transactions } = useAuth();
 
   useEffect(() => {
-    const hisCard = cards.filter((card: any) => card.employeeId == employee.id);
+    const hisCard = cards?.filter(
+      (card: any) => card.employeeId == employee.id
+    );
     setEmployeeCard(hisCard);
   }, [employee, cards]);
   // Function to handle refresh
@@ -167,7 +169,7 @@ export default function EmployeeDashboardPage() {
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">230 L</div>
+              <div className="text-2xl font-bold">{employee?.liter ?? 0} L</div>
               <p className="text-xs text-muted-foreground">
                 -11.5% from last month
               </p>
@@ -191,10 +193,10 @@ export default function EmployeeDashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {employeeCard?.balance} FCFA
+                {employeeCard?.balance ?? 0} FCFA
               </div>
               <p className="text-xs text-muted-foreground">
-                Card: {employeeCard?.cardNumber}
+                Card: {employeeCard?.cardNumber ?? "none"}
               </p>
               <div className="mt-4 flex items-center gap-2">
                 <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
@@ -302,34 +304,38 @@ export default function EmployeeDashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentTransactions.map((transaction) => (
-                  <div
-                    key={transaction.id}
-                    className="flex flex-col gap-2 border-b pb-4"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="font-medium">{transaction.date}</div>
-                      <Badge
-                        variant="outline"
-                        className="text-green-600 border-green-200"
-                      >
-                        {transaction.status}
-                      </Badge>
+                {transactions
+                  ?.filter(
+                    (transaction: any) => transaction.employeeId === employee.id
+                  )
+                  .map((transaction: any) => (
+                    <div
+                      key={transaction.id}
+                      className="flex flex-col gap-2 border-b pb-4"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="font-medium">{transaction.date}</div>
+                        <Badge
+                          variant="outline"
+                          className="text-green-600 border-green-200"
+                        >
+                          {transaction.status}
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          {transaction.location}
+                        </span>
+                        <span>{transaction.amount}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          Transaction ID: {transaction.id}
+                        </span>
+                        <span>{transaction.cost}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {transaction.location}
-                      </span>
-                      <span>{transaction.amount}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        Transaction ID: {transaction.id}
-                      </span>
-                      <span>{transaction.cost}</span>
-                    </div>
-                  </div>
-                ))}
+                  ))}
                 <Button variant="outline" size="sm" asChild className="w-full">
                   <Link href="/employee/transactions">
                     View All Transactions
